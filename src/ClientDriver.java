@@ -24,7 +24,7 @@ public class ClientDriver {
         }
     }
 
-    static private boolean SelectAPI(String Selection) {
+    static private void SelectAPI(String Selection) {
         String[] Keys = APIRegistry.GetAPINames();
         int Choice;
 
@@ -33,24 +33,23 @@ public class ClientDriver {
             Choice = Integer.parseInt(Selection);
         } catch(NumberFormatException e) {
             IO.println("Couldn't execute command, expected a number");
-            return false;
+            return;
         }
 
         //Out-of-bounds error
         if ((Choice > Keys.length) || (Choice <= 0)) {
             IO.println("Couldn't execute command, Out-of-Bounds error");
-            return false;
+            return;
         }
 
         //Execute the API
         APIRegistry.GetAPI(Keys[Choice]).Client.GetAndProcessUserInput();
 
-        return true;
+        return;
     }
 
     static public void Process() {
-        Boolean Running = true;
-        while (Running) {
+        while (true) {
             IO.println("\n============");
             GetDisplay();
             IO.println("============");
