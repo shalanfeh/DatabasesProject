@@ -1,4 +1,4 @@
-/*
+package API;/*
 Created by: Ismail Shalanfeh
 
 Contains a list of all the API's.
@@ -12,14 +12,14 @@ here and have the clientDriver loop over that list.
 APIs must be instantiated. I really tried to make this work without instantiating,
 but I couldn't get it to work due to how the static keyword works :(
 
-ClientAPI stores the name!
+API.ClientAPI stores the name!
  */
 
 import java.util.HashMap;
 import java.util.InputMismatchException;
 
-import ClientAPI.ClientInterface;
-import ServerAPI.ServerAbstract;
+import API.ClientAPI.ClientInterface;
+import API.ServerAPI.ServerAbstract;
 
 public class APIRegistry {
     //Place all AddAPI calls here.
@@ -30,7 +30,7 @@ public class APIRegistry {
         KeyNames = Register.keySet().toArray(new String[0]);
     }
 
-    //Returns the PairAPI or null... it's a hashmap.get() call
+    //Returns the API.PairAPI or null... it's a hashmap.get() call
     public static PairAPI GetAPI(String APIName) {
         return Register.get(APIName);
     }
@@ -53,7 +53,7 @@ public class APIRegistry {
             throw new InputMismatchException("API already exists under the same name.");
         }
 
-        //Create the PairAPI and add it to the hashmap
+        //Create the API.PairAPI and add it to the hashmap
         Register.put(ClientAPI.GetName(), new PairAPI(ClientAPI, ServerAPI));
     }
 

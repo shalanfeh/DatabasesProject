@@ -5,6 +5,8 @@ In-charge of telling the server driver to set up and tear down, registering the 
 and giving control over to the client driver outside of exiting the program.
  */
 
+import API.APIRegistry;
+
 void main() {
     //start the server
     ServerDriver.SetUp();

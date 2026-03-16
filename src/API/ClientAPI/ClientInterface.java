@@ -1,4 +1,4 @@
-package ClientAPI;
+package API.ClientAPI;
 
 public interface ClientInterface {
     //Returns the name for the API registry
@@ -8,7 +8,7 @@ public interface ClientInterface {
     //The name is already displayed, think of this like a description
     public String GetDisplayText();
 
-    //Asks the user for input before calling ServerAPI.Exectute().
+    //Asks the user for input before calling API.ServerAPI.Exectute().
     //SQL is printed.
     public void GetAndProcessUserInput();
 }

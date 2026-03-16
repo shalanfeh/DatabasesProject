@@ -2,8 +2,11 @@
 Created by: Ismail Shalanfeh
 
 Displays all client API's, assigns a number to each API for user selection.
-Calls ClientAPI.GetAndProcessUserInput() when its correlating number is given.
+Calls API.ClientAPI.GetAndProcessUserInput() when its correlating number is given.
  */
+
+import API.APIRegistry;
+import API.PairAPI;
 
 public class ClientDriver {
     //Prints out all of the available API's and the related command

@@ -2,14 +2,14 @@
 Created by: Ismail Shalanfeh
 
 Prepare statement called by ServerDriver.setUp() which is called by main.
-Takes in query parameters from ClientAPI.
+Takes in query parameters from API.ClientAPI.
 Gets connection from serverDriver.
 Returns a string for printing; Can't return ReturnSet due to having a db connection!
 handles everything related to the ReturnSet.
 
 Must Start and End a transaction!
  */
-package ServerAPI;
+package API.ServerAPI;
 
 import java.util.Map;
 
