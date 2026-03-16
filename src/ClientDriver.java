@@ -44,8 +44,6 @@ public class ClientDriver {
 
         //Execute the API
         APIRegistry.GetAPI(Keys[Choice]).Client.GetAndProcessUserInput();
-
-        return;
     }
 
     static public void Process() {
@@ -56,7 +54,7 @@ public class ClientDriver {
             IO.println("\n Commands: Number = API, Nothing = exit");
 
             String Input = IO.readln("Input: ");
-            if (Input.length() == 0) {
+            if (Input.isEmpty()) {
                 return;
             }
 
