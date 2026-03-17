@@ -1,6 +1,7 @@
 package API.ClientAPI;
 
 import API.APIRegistry;
+import Utilities.ParameterGrabber;
 
 public class ClientAssignEmployeeToGroup implements ClientInterface {
     //Returns the name for the API registry

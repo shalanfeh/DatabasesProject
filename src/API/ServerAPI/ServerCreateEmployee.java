@@ -21,6 +21,7 @@ public class ServerCreateEmployee extends ServerAbstract {
             SQLStatement.setString(1, EmployeeEmail);
 
             int rows = SQLStatement.executeUpdate();
+            ServerDriver.GetConnection().commit();
             if (rows > 0) {
                 Result.append("Success: Created employee ").append(EmployeeEmail);
             } else {

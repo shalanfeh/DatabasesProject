@@ -23,6 +23,7 @@ public class ServerRemoveEmployeeFromGroup extends ServerAbstract {
             SQLStatement.setString(2, GroupName);
 
             int rows = SQLStatement.executeUpdate();
+            ServerDriver.GetConnection().commit();
             if (rows > 0) {
                 Result.append("Success: Removed ").append(EmployeeEmail).append(" from group ").append(GroupName);
             } else {

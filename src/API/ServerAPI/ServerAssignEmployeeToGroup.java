@@ -23,15 +23,19 @@ public class ServerAssignEmployeeToGroup extends ServerAbstract {
             SQLStatement.setString(2, GroupName);
 
             int rows = SQLStatement.executeUpdate();
+            ServerDriver.GetConnection().commit();
             if (rows > 0) {
                 Result.append("Success: Assigned ").append(EmployeeEmail).append(" to group ").append(GroupName);
+                ServerDriver.GetConnection().commit();
             } else {
                 Result.append("Failure: No rows were updated. Assignment may not have occurred.");
+                ServerDriver.GetConnection().rollback();
             }
         } catch (SQLException e) {
             IO.println("Couldn't execute statement: \n" + SQLStatement.toString());
             e.printStackTrace();
             Result.append("Failure: ").append(e.getMessage());
+
         }
 
         return Result.toString();
