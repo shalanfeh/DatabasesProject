@@ -74,21 +74,21 @@ public class ParameterGrabber {
         GrabbedParameters = new HashMap<String, Object>();
     }
 
-    ParameterGrabber() {
+    public ParameterGrabber() {
         Init();
     }
 
-    ParameterGrabber(int DefaultInteger) {
+    public ParameterGrabber(int DefaultInteger) {
         Init();
         DefaultNumber = DefaultInteger;
     }
 
-    ParameterGrabber(String DefaultString) {
+    public ParameterGrabber(String DefaultString) {
         Init();
         DefaultText = DefaultString;
     }
 
-    ParameterGrabber(int DefaultInteger, String DefaultString) {
+    public ParameterGrabber(int DefaultInteger, String DefaultString) {
         Init();
         DefaultNumber = DefaultInteger;
         DefaultText = DefaultString;

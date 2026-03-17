@@ -50,6 +50,15 @@ public class ServerDriver {
 
             System.exit(1);
         }
+        //Turn off auto commit
+        try {
+            DatabaseConnection.setAutoCommit(false);
+        } catch (SQLException e) {
+            IO.println("Couldn't turn off auto commit :C");
+            e.printStackTrace();
+
+            System.exit(1);
+        }
     }
 
     //disconnects from the database
@@ -61,6 +70,15 @@ public class ServerDriver {
             e.printStackTrace();
 
             System.exit(1);
+        }
+    }
+
+    static public void RollbackTransaction() {
+        try {
+            DatabaseConnection.rollback();
+        } catch (SQLException e) {
+            IO.println("Could not rollback :<");
+            e.printStackTrace();
         }
     }
 
