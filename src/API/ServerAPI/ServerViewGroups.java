@@ -41,5 +41,5 @@ public class ServerViewGroups extends ServerAbstract {
             e.printStackTrace();
             System.exit(1);
         }
-    };
+    }
 }
