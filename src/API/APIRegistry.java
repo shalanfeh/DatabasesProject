@@ -26,6 +26,9 @@ public class APIRegistry {
     public static void SetUp() {
         //AddAPI(ClientClass.new(), ServerClass.new())
         AddAPI(new ClientViewGroups(), new ServerViewGroups());
+        AddAPI(new ClientAssignEmployeeToGroup(), new ServerAssignEmployeeToGroup());
+        AddAPI(new ClientCreateEmployee(), new ServerCreateEmployee());
+        AddAPI(new ClientRemoveEmployeeFromGroup(), new ServerRemoveEmployeeFromGroup());
 
         //Create KeyNames once so things don't change randomly due to sets being unordered
         KeyNames = Register.keySet().toArray(new String[0]);

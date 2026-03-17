@@ -1,0 +1,28 @@
+package API.ClientAPI;
+
+import API.APIRegistry;
+
+public class ClientAssignEmployeeToGroup implements ClientInterface {
+    //Returns the name for the API registry
+    public String GetName() {
+        return "Assign Employee to Group";
+    }
+
+    //Returns display text for the client driver.
+    //The name is already displayed, think of this like a description
+    public String GetDisplayText() {
+        return "Assigns an employee to a specific group.";
+    }
+
+    //Asks the user for input before calling API.ServerAPI.Execute().
+    //SQL is printed.
+    public void GetAndProcessUserInput() {
+        // Gather required parameters from the user.
+        Utilities.ParameterGrabber grabber = new Utilities.ParameterGrabber();
+        grabber.AddParameter("EmployeeEmail", Utilities.Type.STRING);
+        grabber.AddParameter("GroupName", Utilities.Type.STRING);
+        grabber.GrabParameters();
+
+        IO.println(APIRegistry.GetAPI(GetName()).Server.Execute(grabber.GrabbedParameters));
+    }
+}
