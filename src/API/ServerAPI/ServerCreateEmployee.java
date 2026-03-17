@@ -31,6 +31,7 @@ public class ServerCreateEmployee extends ServerAbstract {
             IO.println("Couldn't execute statement: \n" + SQLStatement.toString());
             e.printStackTrace();
             Result.append("Failure: ").append(e.getMessage());
+            ServerDriver.RollbackTransaction();
         }
 
         return Result.toString();

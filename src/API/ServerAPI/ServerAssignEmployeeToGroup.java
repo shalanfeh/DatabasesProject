@@ -26,14 +26,13 @@ public class ServerAssignEmployeeToGroup extends ServerAbstract {
             ServerDriver.GetConnection().commit();
             if (rows > 0) {
                 Result.append("Success: Assigned ").append(EmployeeEmail).append(" to group ").append(GroupName);
-                ServerDriver.GetConnection().commit();
             } else {
                 Result.append("Failure: No rows were updated. Assignment may not have occurred.");
-                ServerDriver.GetConnection().rollback();
             }
         } catch (SQLException e) {
             IO.println("Couldn't execute statement: \n" + SQLStatement.toString());
             e.printStackTrace();
+            ServerDriver.RollbackTransaction();
             Result.append("Failure: ").append(e.getMessage());
 
         }

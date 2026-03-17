@@ -32,6 +32,7 @@ public class ServerRemoveEmployeeFromGroup extends ServerAbstract {
         } catch (SQLException e) {
             IO.println("Couldn't execute statement: \n" + SQLStatement.toString());
             e.printStackTrace();
+            ServerDriver.RollbackTransaction();
             Result.append("Failure: ").append(e.getMessage());
         }
 
