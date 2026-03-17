@@ -58,6 +58,8 @@ public class ParameterGrabber {
                         IO.println("Invalid input. Try Again");
                         continue;
                     }
+                } else if (entry.getValue() == Type.STRING) {
+                    Result = Input;
                 }
                 //If execution gets here, the result is valid
                 GrabbedParameters.put(entry.getKey(), Result);
