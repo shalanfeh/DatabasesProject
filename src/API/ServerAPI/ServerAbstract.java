@@ -1,7 +1,7 @@
 /*
 Created by: Ismail Shalanfeh
 
-Prepare statement called by API.ServerDriver.setUp() which is called by main.
+Prepare statement called by Drivers.ServerDriver.setUp() which is called by main.
 Takes in query parameters from API.ClientAPI.
 Gets connection from serverDriver.
 Returns a string for printing; Can't return ReturnSet due to having a db connection!

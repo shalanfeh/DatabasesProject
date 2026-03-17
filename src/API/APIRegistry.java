@@ -4,7 +4,7 @@ Created by: Ismail Shalanfeh
 Contains a list of all the API's.
 
 Why do we need this?
-Because ClientDriver needs access to client APIs, and instead of
+Because Drivers.ClientDriver needs access to client APIs, and instead of
 importing the entire package and putting a line for each and every single
 API in the client driver to get its information, we can instead move that to
 here and have the clientDriver loop over that list.

@@ -6,7 +6,8 @@ and giving control over to the client driver outside of exiting the program.
  */
 
 import API.APIRegistry;
-import API.ServerDriver;
+import Drivers.ClientDriver;
+import Drivers.ServerDriver;
 
 void main() {
     //start the server
