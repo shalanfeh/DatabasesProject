@@ -2,7 +2,7 @@
 Created by: Ismail Shalanfeh
 
 In-charge of telling the server driver to set up and tear down, registering the API's,
-and giving control over to the client driver outside of exiting the program.
+and giving control over to the client driver after exiting the program.
  */
 
 import API.APIRegistry;
