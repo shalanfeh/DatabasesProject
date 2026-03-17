@@ -12,13 +12,18 @@ public class ServerCreateEmployee extends ServerAbstract {
 
         try {
             // Get the parameters from the client
+            String FirstName = (String) Parameters.get("FirstName");
+            String LastName = (String) Parameters.get("LastName");
             String EmployeeEmail = (String) Parameters.get("EmployeeEmail");
 
-            if (EmployeeEmail == null) {
-                return "Failure: Missing parameters. Please provide EmployeeEmail.";
+            if (FirstName == null || LastName == null || EmployeeEmail == null) {
+                return "Failure: Missing parameters. Please provide FirstName, LastName, and Email.";
             }
 
-            SQLStatement.setString(1, EmployeeEmail);
+            SQLStatement.setString(1, FirstName);
+            SQLStatement.setString(2, LastName);
+            SQLStatement.setString(3, EmployeeEmail);
+
 
             int rows = SQLStatement.executeUpdate();
             ServerDriver.GetConnection().commit();
