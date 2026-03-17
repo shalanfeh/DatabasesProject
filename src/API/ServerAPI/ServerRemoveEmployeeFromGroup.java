@@ -43,7 +43,7 @@ public class ServerRemoveEmployeeFromGroup extends ServerAbstract {
     protected void Prepare() {
         // EmployeeGroupMember uses numeric keys (EmployeeId, GroupId).
         // We use USING to delete based on Employee.Email and EmployeeGroup.GroupName.
-        String Sql = "DELETE FROM EmployeeGroupMember" +
+        String Sql = "DELETE FROM EmployeeGroupMembers " +
                 "USING Employee, EmployeeGroup " +
                 "WHERE EmployeeGroupMembers.EmployeeId = Employee.EmployeeId AND EmployeeGroupMembers.GroupId = EmployeeGroup.GroupId " +
                 "AND Employee.Email = ? AND EmployeeGroup.GroupName = ?";

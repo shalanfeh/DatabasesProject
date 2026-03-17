@@ -44,7 +44,7 @@ public class ServerAssignEmployeeToGroup extends ServerAbstract {
     protected void Prepare() {
         // EmployeeGroupMember uses the numeric keys (EmployeeId, GroupId).
         // We resolve those IDs by joining against Employee (Email) and EmployeeGroup (GroupName).
-        String Sql = "INSERT INTO EmployeeGroupMember (EmployeeId, GroupId) " +
+        String Sql = "INSERT INTO EmployeeGroupMembers (EmployeeId, GroupId) " +
                 "SELECT Employee.EmployeeId, EmployeeGroup.GroupId " +
                 "FROM Employee, EmployeeGroup " +
                 "WHERE Employee.Email = ? AND EmployeeGroup.GroupName = ?";
