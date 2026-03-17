@@ -18,13 +18,14 @@ API.ClientAPI stores the name!
 import java.util.HashMap;
 import java.util.InputMismatchException;
 
-import API.ClientAPI.ClientInterface;
-import API.ServerAPI.ServerAbstract;
+import API.ClientAPI.*;
+import API.ServerAPI.*;
 
 public class APIRegistry {
     //Place all AddAPI calls here.
     public static void SetUp() {
         //AddAPI(ClientClass.new(), ServerClass.new())
+        AddAPI(new ClientViewGroups(), new ServerViewGroups());
 
         //Create KeyNames once so things don't change randomly due to sets being unordered
         KeyNames = Register.keySet().toArray(new String[0]);

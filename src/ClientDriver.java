@@ -46,7 +46,7 @@ public class ClientDriver {
         }
 
         //Execute the API
-        APIRegistry.GetAPI(Keys[Choice]).Client.GetAndProcessUserInput();
+        APIRegistry.GetAPI(Keys[Choice-1]).Client.GetAndProcessUserInput();
     }
 
     static public void Process() {
