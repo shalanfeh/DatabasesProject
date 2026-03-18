@@ -18,7 +18,7 @@ public class ServerCreateGroup extends ServerAbstract {
         StringBuilder Result = new StringBuilder();
 
         try {
-            if (((String) Parameters.get("GroupName")).equals("")) {
+            if (((String) Parameters.get("GroupName")).isEmpty()) {
                 throw new SQLException();
             }
 

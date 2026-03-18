@@ -16,7 +16,6 @@ but I couldn't get it to work due to how the static keyword works :(
 API.ClientAPI stores the name!
  */
 
-import java.security.Key;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.InputMismatchException;
