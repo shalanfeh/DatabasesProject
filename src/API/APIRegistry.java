@@ -1,4 +1,5 @@
-package API;/*
+package API;
+/*
 Created by: Ismail Shalanfeh
 
 Contains a list of all the API's.
@@ -15,6 +16,8 @@ but I couldn't get it to work due to how the static keyword works :(
 API.ClientAPI stores the name!
  */
 
+import java.security.Key;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 
@@ -29,9 +32,12 @@ public class APIRegistry {
         AddAPI(new ClientAssignEmployeeToGroup(), new ServerAssignEmployeeToGroup());
         AddAPI(new ClientCreateEmployee(), new ServerCreateEmployee());
         AddAPI(new ClientRemoveEmployeeFromGroup(), new ServerRemoveEmployeeFromGroup());
+        AddAPI(new ClientCreateGroup(), new ServerCreateGroup());
+        AddAPI(new ClientViewEmployee(), new ServerViewEmployee());
 
         //Create KeyNames once so things don't change randomly due to sets being unordered
         KeyNames = Register.keySet().toArray(new String[0]);
+        Arrays.sort(KeyNames);
     }
 
     //Returns the API.PairAPI or null... it's a hashmap.get() call
