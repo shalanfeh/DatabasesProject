@@ -79,7 +79,7 @@ public class ServerUpdateDevice extends ServerAbstract{
         } catch (SQLException e) {
             // Handle SQL errors and rollback
             IO.println("Couldn't execute statement: \n" + SQLStatement.toString());
-            e.printStackTrace();
+            // e.printStackTrace();  // removed to avoid leaking internal details
             Result.append("Failure: ").append(e.getMessage());
             ServerDriver.RollbackTransaction();
         }
@@ -110,7 +110,7 @@ public class ServerUpdateDevice extends ServerAbstract{
             SQLStatement = ServerDriver.GetConnection().prepareStatement(Sql);
         } catch (SQLException e) {
             IO.println("Couldn't prepare statement: \n" + Sql);
-            e.printStackTrace();
+            // e.printStackTrace();  // removed to avoid leaking internal details
             System.exit(1);
         }
     }

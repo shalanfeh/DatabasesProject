@@ -48,7 +48,7 @@ public class ServerViewDevice extends ServerAbstract{
             }
         } catch (SQLException e) {
             IO.println("Couldn't execute statement: \n" + SQLStatement.toString());
-            e.printStackTrace();
+            // e.printStackTrace();  // removed to avoid leaking internal detailse.printStackTrace();
             Result.append("Failure: ").append(e.getMessage());
         }
         return Result.toString();
@@ -75,7 +75,7 @@ public class ServerViewDevice extends ServerAbstract{
             SQLStatement = ServerDriver.GetConnection().prepareStatement(Sql);
         } catch (SQLException e) {
             IO.println("Couldn't prepare statement: \n" + Sql);
-            e.printStackTrace();
+            // e.printStackTrace();  // removed to avoid leaking internal details
             System.exit(1);
         }
     }

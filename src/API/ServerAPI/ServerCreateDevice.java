@@ -30,7 +30,7 @@ public class ServerCreateDevice extends ServerAbstract{
             }
         } catch (SQLException e) {
             IO.println("Couldn't execute statement: \n" + SQLStatement.toString());
-            e.printStackTrace();
+            // e.printStackTrace();  // removed to avoid leaking internal details
             Result.append("Failure: ").append(e.getMessage());
             ServerDriver.RollbackTransaction();
         }
