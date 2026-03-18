@@ -41,7 +41,7 @@ public class APIRegistry {
         AddAPI(new ClientViewGroupFromEmployee(), new ServerViewGroupFromEmployee());
         AddAPI(new ClientViewAllDevices(), new ServerViewAllDevices());
         AddAPI(new ClientAssignDevice(), new ServerAssignDevice());
-
+        AddAPI(new ClientViewDevice(), new ServerViewDevice());
         // Create KeyNames once so things don't change randomly due to sets being
         // unordered
         KeyNames = Register.keySet().toArray(new String[0]);
