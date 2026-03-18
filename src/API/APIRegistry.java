@@ -29,7 +29,7 @@ public class APIRegistry {
         AddAPI(new ClientAssignEmployeeToGroup(), new ServerAssignEmployeeToGroup());
         AddAPI(new ClientCreateEmployee(), new ServerCreateEmployee());
         AddAPI(new ClientRemoveEmployeeFromGroup(), new ServerRemoveEmployeeFromGroup());
-
+        AddAPI(new ClientCreateDevice(), new ServerCreateDevice());
         //Create KeyNames once so things don't change randomly due to sets being unordered
         KeyNames = Register.keySet().toArray(new String[0]);
     }
