@@ -1,5 +1,12 @@
 package API.ServerAPI;
 
+/*
+Created by: Taylor Kang
+
+Assigns a device to exactly one employee, group, or location.
+Uses a single transaction and locks the device row before updating.
+*/
+
 import Drivers.ServerDriver;
 
 import java.sql.PreparedStatement;
@@ -8,107 +15,110 @@ import java.sql.SQLException;
 import java.util.Map;
 
 public class ServerAssignDevice extends ServerAbstract {
-    private PreparedStatement checkActiveAssignmentStatement;
-    private PreparedStatement resolveEmployeeStatement;
-    private PreparedStatement resolveGroupStatement;
-    private PreparedStatement resolveLocationStatement;
-    private PreparedStatement insertEmployeeAssignmentStatement;
-    private PreparedStatement insertGroupAssignmentStatement;
-    private PreparedStatement insertLocationAssignmentStatement;
-    private PreparedStatement assignedStatusStatement;
-    private PreparedStatement updateDeviceStatusStatement;
+    private PreparedStatement CheckActiveAssignmentStatement;
+    private PreparedStatement ResolveEmployeeStatement;
+    private PreparedStatement ResolveGroupStatement;
+    private PreparedStatement ResolveLocationStatement;
+    private PreparedStatement InsertEmployeeAssignmentStatement;
+    private PreparedStatement InsertGroupAssignmentStatement;
+    private PreparedStatement InsertLocationAssignmentStatement;
+    private PreparedStatement AssignedStatusStatement;
+    private PreparedStatement UpdateDeviceStatusStatement;
 
+    // Executes the assign-device transaction using validated input.
     public String Execute(Map<String, Object> Parameters) {
         if (Parameters == null) {
             return "Failure: Missing parameters. Please provide SerialNumber and exactly one target.";
         }
 
-        String serialNumber = ((String) Parameters.get("SerialNumber")).trim();
-        String employeeEmail = ((String) Parameters.get("EmployeeEmail")).trim();
-        String groupName = ((String) Parameters.get("GroupName")).trim();
-        String locationName = ((String) Parameters.get("LocationName")).trim();
+        String SerialNumber = SafeTrim(Parameters.get("SerialNumber"));
+        String EmployeeEmail = SafeTrim(Parameters.get("EmployeeEmail"));
+        String GroupName = SafeTrim(Parameters.get("GroupName"));
+        String LocationName = SafeTrim(Parameters.get("LocationName"));
 
-        if (serialNumber.isEmpty()) {
+        if (SerialNumber.isEmpty()) {
             return "Failure: SerialNumber cannot be empty.";
         }
 
-        int targetCount = 0;
-        if (!employeeEmail.isEmpty()) {
-            targetCount += 1;
+        int TargetCount = 0;
+        if (!EmployeeEmail.isEmpty()) {
+            TargetCount += 1;
         }
-        if (!groupName.isEmpty()) {
-            targetCount += 1;
+        if (!GroupName.isEmpty()) {
+            TargetCount += 1;
         }
-        if (!locationName.isEmpty()) {
-            targetCount += 1;
+        if (!LocationName.isEmpty()) {
+            TargetCount += 1;
         }
-        if (targetCount != 1) {
-            return "Failure: Provide exactly one assignment target: EmployeeEmail, GroupName, or LocationName.";
+        if (TargetCount != 1) {
+            return "Failure: Provide exactly one target: EmployeeEmail, GroupName, or LocationName.";
         }
 
         try {
-            SQLStatement.setString(1, serialNumber);
-            ResultSet deviceResult = SQLStatement.executeQuery();
-            if (!deviceResult.next()) {
-                return "Failure: Device with serial number " + serialNumber + " does not exist.";
-            }
-
-            int deviceId = deviceResult.getInt("deviceid");
-            String currentStatus = deviceResult.getString("currentstatus");
-            if (!"Available".equalsIgnoreCase(currentStatus)) {
-                return "Failure: Device " + serialNumber + " is currently marked as " + currentStatus + ".";
-            }
-
-            checkActiveAssignmentStatement.setInt(1, deviceId);
-            ResultSet activeAssignmentResult = checkActiveAssignmentStatement.executeQuery();
-            if (activeAssignmentResult.next()) {
-                return "Failure: Device " + serialNumber + " already has an active assignment.";
-            }
-
-            int assignedStatusId = resolveAssignedStatusId();
-            if (assignedStatusId == -1) {
-                return "Failure: Could not resolve the Assigned status id.";
-            }
-
-            String successTargetLabel;
-            if (!employeeEmail.isEmpty()) {
-                Integer employeeId = resolveEmployeeId(employeeEmail);
-                if (employeeId == null) {
-                    return "Failure: Employee email not found: " + employeeEmail;
+            SQLStatement.setString(1, SerialNumber);
+            try (ResultSet DeviceResult = SQLStatement.executeQuery()) {
+                if (!DeviceResult.next()) {
+                    return "Failure: Device with serial number " + SerialNumber + " does not exist.";
                 }
 
-                insertEmployeeAssignmentStatement.setInt(1, deviceId);
-                insertEmployeeAssignmentStatement.setInt(2, employeeId);
-                insertEmployeeAssignmentStatement.executeUpdate();
-                successTargetLabel = "employee " + employeeEmail;
-            } else if (!groupName.isEmpty()) {
-                Integer groupId = resolveGroupId(groupName);
-                if (groupId == null) {
-                    return "Failure: Group name not found: " + groupName;
+                int DeviceId = DeviceResult.getInt("deviceid");
+                String CurrentStatus = DeviceResult.getString("currentstatus");
+                if (!"Available".equalsIgnoreCase(CurrentStatus)) {
+                    return "Failure: Device " + SerialNumber + " is currently marked as " + CurrentStatus + ".";
                 }
 
-                insertGroupAssignmentStatement.setInt(1, deviceId);
-                insertGroupAssignmentStatement.setInt(2, groupId);
-                insertGroupAssignmentStatement.executeUpdate();
-                successTargetLabel = "group " + groupName;
-            } else {
-                Integer locationId = resolveLocationId(locationName);
-                if (locationId == null) {
-                    return "Failure: Location name not found: " + locationName;
+                CheckActiveAssignmentStatement.setInt(1, DeviceId);
+                try (ResultSet ActiveAssignmentResult = CheckActiveAssignmentStatement.executeQuery()) {
+                    if (ActiveAssignmentResult.next()) {
+                        return "Failure: Device " + SerialNumber + " already has an active assignment.";
+                    }
                 }
 
-                insertLocationAssignmentStatement.setInt(1, deviceId);
-                insertLocationAssignmentStatement.setInt(2, locationId);
-                insertLocationAssignmentStatement.executeUpdate();
-                successTargetLabel = "location " + locationName;
+                int AssignedStatusId = ResolveAssignedStatusId();
+                if (AssignedStatusId == -1) {
+                    return "Failure: Could not resolve the Assigned status id.";
+                }
+
+                String SuccessTargetLabel;
+                if (!EmployeeEmail.isEmpty()) {
+                    Integer EmployeeId = ResolveEmployeeId(EmployeeEmail);
+                    if (EmployeeId == null) {
+                        return "Failure: Employee email not found: " + EmployeeEmail;
+                    }
+
+                    InsertEmployeeAssignmentStatement.setInt(1, DeviceId);
+                    InsertEmployeeAssignmentStatement.setInt(2, EmployeeId);
+                    InsertEmployeeAssignmentStatement.executeUpdate();
+                    SuccessTargetLabel = "employee " + EmployeeEmail;
+                } else if (!GroupName.isEmpty()) {
+                    Integer GroupId = ResolveGroupId(GroupName);
+                    if (GroupId == null) {
+                        return "Failure: Group name not found: " + GroupName;
+                    }
+
+                    InsertGroupAssignmentStatement.setInt(1, DeviceId);
+                    InsertGroupAssignmentStatement.setInt(2, GroupId);
+                    InsertGroupAssignmentStatement.executeUpdate();
+                    SuccessTargetLabel = "group " + GroupName;
+                } else {
+                    Integer LocationId = ResolveLocationId(LocationName);
+                    if (LocationId == null) {
+                        return "Failure: Location name not found: " + LocationName;
+                    }
+
+                    InsertLocationAssignmentStatement.setInt(1, DeviceId);
+                    InsertLocationAssignmentStatement.setInt(2, LocationId);
+                    InsertLocationAssignmentStatement.executeUpdate();
+                    SuccessTargetLabel = "location " + LocationName;
+                }
+
+                UpdateDeviceStatusStatement.setInt(1, AssignedStatusId);
+                UpdateDeviceStatusStatement.setInt(2, DeviceId);
+                UpdateDeviceStatusStatement.executeUpdate();
+
+                ServerDriver.GetConnection().commit();
+                return "Success: Assigned device " + SerialNumber + " to " + SuccessTargetLabel + ".";
             }
-
-            updateDeviceStatusStatement.setInt(1, assignedStatusId);
-            updateDeviceStatusStatement.setInt(2, deviceId);
-            updateDeviceStatusStatement.executeUpdate();
-
-            ServerDriver.GetConnection().commit();
-            return "Success: Assigned device " + serialNumber + " to " + successTargetLabel + ".";
         } catch (SQLException e) {
             IO.println("Couldn't execute assign-device transaction.");
             e.printStackTrace();
@@ -117,33 +127,34 @@ public class ServerAssignDevice extends ServerAbstract {
         }
     }
 
+    // Prepares all statements once for reuse.
     protected void Prepare() {
-        String resolveDeviceSql = "SELECT d.DeviceID, s.CurrentStatus " +
+        String ResolveDeviceSql = "SELECT d.DeviceID, s.CurrentStatus " +
                 "FROM Device d " +
                 "JOIN Status s ON d.StatusID = s.StatusID " +
                 "WHERE d.SerialNumber = ? " +
                 "FOR UPDATE";
-        String checkActiveAssignmentSql = "SELECT AssignmentID FROM DeviceAssignment WHERE DeviceID = ? AND ReturnDate IS NULL";
-        String resolveEmployeeSql = "SELECT EmployeeID FROM Employee WHERE Email = ?";
-        String resolveGroupSql = "SELECT GroupID FROM EmployeeGroup WHERE GroupName = ?";
-        String resolveLocationSql = "SELECT LocationID FROM SharedLocation WHERE LocationName = ?";
-        String insertEmployeeAssignmentSql = "INSERT INTO DeviceAssignment (DeviceID, EmployeeID, AssignDate) VALUES (?, ?, CURRENT_DATE)";
-        String insertGroupAssignmentSql = "INSERT INTO DeviceAssignment (DeviceID, GroupID, AssignDate) VALUES (?, ?, CURRENT_DATE)";
-        String insertLocationAssignmentSql = "INSERT INTO DeviceAssignment (DeviceID, LocationID, AssignDate) VALUES (?, ?, CURRENT_DATE)";
-        String assignedStatusSql = "SELECT StatusID FROM Status WHERE CurrentStatus = 'Assigned'";
-        String updateDeviceStatusSql = "UPDATE Device SET StatusID = ?, LastUpdate = CURRENT_DATE WHERE DeviceID = ?";
+        String CheckActiveAssignmentSql = "SELECT AssignmentID FROM DeviceAssignment WHERE DeviceID = ? AND ReturnDate IS NULL";
+        String ResolveEmployeeSql = "SELECT EmployeeID FROM Employee WHERE Email = ?";
+        String ResolveGroupSql = "SELECT GroupID FROM EmployeeGroup WHERE GroupName = ?";
+        String ResolveLocationSql = "SELECT LocationID FROM SharedLocation WHERE LocationName = ?";
+        String InsertEmployeeAssignmentSql = "INSERT INTO DeviceAssignment (DeviceID, EmployeeID, AssignDate) VALUES (?, ?, CURRENT_DATE)";
+        String InsertGroupAssignmentSql = "INSERT INTO DeviceAssignment (DeviceID, GroupID, AssignDate) VALUES (?, ?, CURRENT_DATE)";
+        String InsertLocationAssignmentSql = "INSERT INTO DeviceAssignment (DeviceID, LocationID, AssignDate) VALUES (?, ?, CURRENT_DATE)";
+        String AssignedStatusSql = "SELECT StatusID FROM Status WHERE CurrentStatus = 'Assigned'";
+        String UpdateDeviceStatusSql = "UPDATE Device SET StatusID = ?, LastUpdate = CURRENT_DATE WHERE DeviceID = ?";
 
         try {
-            SQLStatement = ServerDriver.GetConnection().prepareStatement(resolveDeviceSql);
-            checkActiveAssignmentStatement = ServerDriver.GetConnection().prepareStatement(checkActiveAssignmentSql);
-            resolveEmployeeStatement = ServerDriver.GetConnection().prepareStatement(resolveEmployeeSql);
-            resolveGroupStatement = ServerDriver.GetConnection().prepareStatement(resolveGroupSql);
-            resolveLocationStatement = ServerDriver.GetConnection().prepareStatement(resolveLocationSql);
-            insertEmployeeAssignmentStatement = ServerDriver.GetConnection().prepareStatement(insertEmployeeAssignmentSql);
-            insertGroupAssignmentStatement = ServerDriver.GetConnection().prepareStatement(insertGroupAssignmentSql);
-            insertLocationAssignmentStatement = ServerDriver.GetConnection().prepareStatement(insertLocationAssignmentSql);
-            assignedStatusStatement = ServerDriver.GetConnection().prepareStatement(assignedStatusSql);
-            updateDeviceStatusStatement = ServerDriver.GetConnection().prepareStatement(updateDeviceStatusSql);
+            SQLStatement = ServerDriver.GetConnection().prepareStatement(ResolveDeviceSql);
+            CheckActiveAssignmentStatement = ServerDriver.GetConnection().prepareStatement(CheckActiveAssignmentSql);
+            ResolveEmployeeStatement = ServerDriver.GetConnection().prepareStatement(ResolveEmployeeSql);
+            ResolveGroupStatement = ServerDriver.GetConnection().prepareStatement(ResolveGroupSql);
+            ResolveLocationStatement = ServerDriver.GetConnection().prepareStatement(ResolveLocationSql);
+            InsertEmployeeAssignmentStatement = ServerDriver.GetConnection().prepareStatement(InsertEmployeeAssignmentSql);
+            InsertGroupAssignmentStatement = ServerDriver.GetConnection().prepareStatement(InsertGroupAssignmentSql);
+            InsertLocationAssignmentStatement = ServerDriver.GetConnection().prepareStatement(InsertLocationAssignmentSql);
+            AssignedStatusStatement = ServerDriver.GetConnection().prepareStatement(AssignedStatusSql);
+            UpdateDeviceStatusStatement = ServerDriver.GetConnection().prepareStatement(UpdateDeviceStatusSql);
         } catch (SQLException e) {
             IO.println("Couldn't prepare assign-device statements.");
             e.printStackTrace();
@@ -151,38 +162,54 @@ public class ServerAssignDevice extends ServerAbstract {
         }
     }
 
-    private Integer resolveEmployeeId(String employeeEmail) throws SQLException {
-        resolveEmployeeStatement.setString(1, employeeEmail);
-        ResultSet rs = resolveEmployeeStatement.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("employeeid");
+    // Resolves an employee natural key to its surrogate key.
+    private Integer ResolveEmployeeId(String EmployeeEmail) throws SQLException {
+        ResolveEmployeeStatement.setString(1, EmployeeEmail);
+        try (ResultSet RS = ResolveEmployeeStatement.executeQuery()) {
+            if (RS.next()) {
+                return RS.getInt("employeeid");
+            }
         }
         return null;
     }
 
-    private Integer resolveGroupId(String groupName) throws SQLException {
-        resolveGroupStatement.setString(1, groupName);
-        ResultSet rs = resolveGroupStatement.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("groupid");
+    // Resolves a group natural key to its surrogate key.
+    private Integer ResolveGroupId(String GroupName) throws SQLException {
+        ResolveGroupStatement.setString(1, GroupName);
+        try (ResultSet RS = ResolveGroupStatement.executeQuery()) {
+            if (RS.next()) {
+                return RS.getInt("groupid");
+            }
         }
         return null;
     }
 
-    private Integer resolveLocationId(String locationName) throws SQLException {
-        resolveLocationStatement.setString(1, locationName);
-        ResultSet rs = resolveLocationStatement.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("locationid");
+    // Resolves a location natural key to its surrogate key.
+    private Integer ResolveLocationId(String LocationName) throws SQLException {
+        ResolveLocationStatement.setString(1, LocationName);
+        try (ResultSet RS = ResolveLocationStatement.executeQuery()) {
+            if (RS.next()) {
+                return RS.getInt("locationid");
+            }
         }
         return null;
     }
 
-    private int resolveAssignedStatusId() throws SQLException {
-        ResultSet rs = assignedStatusStatement.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("statusid");
+    // Resolves the Assigned status row needed for the update.
+    private int ResolveAssignedStatusId() throws SQLException {
+        try (ResultSet RS = AssignedStatusStatement.executeQuery()) {
+            if (RS.next()) {
+                return RS.getInt("statusid");
+            }
         }
         return -1;
+    }
+
+    // Converts a parameter to a trimmed string safely.
+    private String SafeTrim(Object Value) {
+        if (Value == null) {
+            return "";
+        }
+        return Value.toString().trim();
     }
 }
