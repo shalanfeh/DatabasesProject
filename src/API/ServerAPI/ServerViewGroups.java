@@ -23,7 +23,7 @@ public class ServerViewGroups extends ServerAbstract {
             }
         } catch (SQLException e) {
             IO.println("Couldn't execute statement: \n" + SQLStatement.toString());
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return Result.toString();
