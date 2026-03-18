@@ -1,4 +1,5 @@
-package API;/*
+package API;
+/*
 Created by: Ismail Shalanfeh
 
 Contains a list of all the API's.
@@ -35,6 +36,14 @@ public class APIRegistry {
         AddAPI(new ClientViewEmployee(), new ServerViewEmployee());
         AddAPI(new ClientUpdateDevice(), new ServerUpdateDevice());
         //Create KeyNames once so things don't change randomly due to sets being unordered
+        AddAPI(new ClientUpdateEmployee(), new ServerUpdateEmployee());
+        AddAPI(new ClientViewGroupMembers(), new ServerViewGroupMembers());
+        AddAPI(new ClientViewGroupFromEmployee(), new ServerViewGroupFromEmployee());
+        AddAPI(new ClientViewAllDevices(), new ServerViewAllDevices());
+        AddAPI(new ClientAssignDevice(), new ServerAssignDevice());
+
+        // Create KeyNames once so things don't change randomly due to sets being
+        // unordered
         KeyNames = Register.keySet().toArray(new String[0]);
         Arrays.sort(KeyNames);
     }
